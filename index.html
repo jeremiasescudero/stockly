@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Stockly — Sistema de gestión comercial</title>
+<meta name="description" content="Stock, ventas, caja y proveedores integrados. El sistema de gestión para tu negocio.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F0F4F0;
+  --bg-2: #E4EAE4;
+  --surface: #FAFCF8;
+  --surface-2: #EFF3EE;
+  --border: #D0DAD0;
+  --border-2: #BDCABD;
+  --text: #0E2C40;
+  --text-2: #1A4A5A;
+  --text-3: #6A8E8E;
+  --accent: #148D8D;
+  --accent-2: #17A3A3;
+  --accent-soft: rgba(20,141,141,0.08);
+  --accent-soft-2: rgba(20,141,141,0.15);
+  --gold: #EFBC75;
+  --gold-2: #F5CC8E;
+  --green: #C1E1A7;
+  --teal: #1A4A5A;
+  --teal-light: #1A4A5A;
+  --teal-lighter: #148D8D;
+  --hero-bg: #0E2C40;
+  --hero-surface: rgba(255,255,255,0.04);
+  --hero-border: rgba(255,255,255,0.08);
+  --hero-text: #F0F4F0;
+  --hero-muted: rgba(255,255,255,0.5);
+  --shadow-sm: 0 1px 2px rgba(14,44,64,0.04);
+  --shadow: 0 2px 8px rgba(14,44,64,0.06), 0 8px 24px rgba(14,44,64,0.04);
+  --shadow-lg: 0 4px 16px rgba(14,44,64,0.08), 0 16px 48px rgba(14,44,64,0.06);
+  --shadow-xl: 0 8px 32px rgba(14,44,64,0.12), 0 24px 64px rgba(14,44,64,0.08);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --mono: 'DM Mono', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #091E2C;
+    --bg-2: #071822;
+    --surface: #0E2C40;
+    --surface-2: #0B2333;
+    --border: #1A4A5A;
+    --border-2: #1F5A6C;
+    --text: #E8F0E8;
+    --text-2: #A0C0B8;
+    --text-3: #5A8A80;
+    --accent: #1AAFAF;
+    --accent-2: #22C4C4;
+    --accent-soft: rgba(26,175,175,0.1);
+    --accent-soft-2: rgba(26,175,175,0.18);
+    --hero-bg: #06131C;
+    --hero-surface: rgba(255,255,255,0.03);
+    --hero-border: rgba(255,255,255,0.06);
+    --hero-text: #E8F0E8;
+    --hero-muted: rgba(255,255,255,0.4);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.15);
+    --shadow: 0 2px 8px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.25), 0 16px 48px rgba(0,0,0,0.2);
+    --shadow-xl: 0 8px 32px rgba(0,0,0,0.3), 0 24px 64px rgba(0,0,0,0.25);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #091E2C;
+  --bg-2: #071822;
+  --surface: #0E2C40;
+  --surface-2: #0B2333;
+  --border: #1A4A5A;
+  --border-2: #1F5A6C;
+  --text: #E8F0E8;
+  --text-2: #A0C0B8;
+  --text-3: #5A8A80;
+  --accent: #1AAFAF;
+  --accent-2: #22C4C4;
+  --accent-soft: rgba(26,175,175,0.1);
+  --accent-soft-2: rgba(26,175,175,0.18);
+  --hero-bg: #06131C;
+  --hero-surface: rgba(255,255,255,0.03);
+  --hero-border: rgba(255,255,255,0.06);
+  --hero-text: #E8F0E8;
+  --hero-muted: rgba(255,255,255,0.4);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.15);
+  --shadow: 0 2px 8px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.25), 0 16px 48px rgba(0,0,0,0.2);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.3), 0 24px 64px rgba(0,0,0,0.25);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--display);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%}
+
+.wrap{max-width:1140px;margin:0 auto;padding-inline:24px}
+@media(max-width:600px){.wrap{padding-inline:16px}}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:var(--hero-bg);backdrop-filter:blur(16px)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:800;font-size:20px;color:#fff;text-decoration:none;display:flex;align-items:center;gap:6px;letter-spacing:-0.02em}
+.logo i{width:22px;height:22px;background:linear-gradient(135deg,var(--accent),var(--gold));border-radius:6px;display:block}
+.nav-r{display:flex;align-items:center;gap:24px}
+.nav-r a{color:rgba(255,255,255,0.55);text-decoration:none;font-size:13px;font-weight:600;transition:color .2s}
+.nav-r a:hover{color:#fff}
+.btn-nav{background:var(--accent)!important;color:#fff!important;padding:8px 18px;border-radius:8px;transition:all .2s}
+.btn-nav:hover{background:var(--accent-2)!important;transform:translateY(-1px)}
+@media(max-width:640px){.nav-r .desk{display:none}}
+
+/* HERO */
+.hero{background:var(--hero-bg);padding:72px 0 0;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(20,141,141,0.15),transparent 70%);top:-200px;right:-100px;pointer-events:none}
+.hero::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(239,188,117,0.1),transparent 70%);bottom:-100px;left:-100px;pointer-events:none}
+.hero-in{position:relative;z-index:1;text-align:center;max-width:760px;margin:0 auto;padding-inline:24px}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--hero-surface);border:1px solid var(--hero-border);padding:6px 16px 6px 8px;border-radius:100px;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:28px}
+.hero-pill span{background:var(--accent);color:#fff;font-size:10px;padding:3px 8px;border-radius:100px;font-weight:700;letter-spacing:0.03em}
+.hero h1{font-size:clamp(36px,6vw,64px);font-weight:800;line-height:1.05;color:var(--hero-text);letter-spacing:-0.03em;margin-bottom:20px}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(15px,2vw,18px);color:var(--hero-muted);line-height:1.65;max-width:520px;margin:0 auto 36px;font-weight:400}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-family:var(--display);font-weight:700;font-size:15px;text-decoration:none;border:none;cursor:pointer;transition:all .25s}
+.btn-fill{background:var(--accent);color:#fff}
+.btn-fill:hover{background:var(--accent-2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(20,141,141,0.3)}
+.btn-ghost{background:transparent;color:var(--hero-muted);border:1px solid var(--hero-border)}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.25);color:#fff}
+
+.hero-proof{display:flex;align-items:center;justify-content:center;gap:20px;font-size:12px;color:var(--hero-muted);font-weight:500;margin-bottom:56px}
+.hero-proof svg{opacity:0.5}
+@media(max-width:480px){.hero-proof{flex-direction:column;gap:8px}}
+
+/* HERO MOCKUP */
+.hero-mock-wrap{position:relative;max-width:920px;margin:0 auto;perspective:1200px}
+.hero-mock{background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;overflow:hidden;box-shadow:var(--shadow-xl);border:1px solid var(--hero-border);border-bottom:none;transform:rotateX(4deg);transform-origin:bottom center;font-size:11px}
+.mock-chrome{background:var(--teal);display:flex;align-items:center;padding:10px 16px;gap:10px}
+.mock-dots{display:flex;gap:5px}
+.mock-dots i{width:9px;height:9px;border-radius:50%;display:block}
+.mock-dots i:nth-child(1){background:#EF5350}
+.mock-dots i:nth-child(2){background:#FFC107}
+.mock-dots i:nth-child(3){background:#4CAF50}
+.mock-url{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;padding:5px 12px;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.45)}
+.mock-body{display:grid;grid-template-columns:160px 1fr;min-height:300px}
+.mock-side{background:var(--teal);padding:16px 0;display:flex;flex-direction:column;gap:2px}
+.mock-side-brand{padding:4px 16px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:6px}
+.mock-side-brand i{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold))}
+.mock-side-brand div{color:rgba(255,255,255,0.7);font-size:10px;font-weight:700;letter-spacing:0.02em}
+.mock-side-brand small{display:block;font-weight:400;font-size:8px;color:rgba(255,255,255,0.35)}
+.si{padding:7px 16px;font-size:10px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:8px;font-weight:500;border-left:2px solid transparent;transition:all .15s}
+.si.on{color:#fff;background:rgba(255,255,255,0.06);border-left-color:var(--accent)}
+.si svg{width:13px;height:13px;opacity:0.6}
+.si.on svg{opacity:1}
+.mock-main{background:var(--surface);padding:20px}
+
+.mk-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.mk-kpi{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.mk-kpi-l{font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);font-weight:600;margin-bottom:6px}
+.mk-kpi-v{font-size:20px;font-weight:800;letter-spacing:-0.02em;color:var(--text);font-variant-numeric:tabular-nums}
+.mk-kpi-v.up{color:var(--accent)}
+.mk-kpi-d{font-size:9px;color:var(--accent);font-weight:600;margin-top:2px}
+
+.mk-chart{display:flex;align-items:flex-end;gap:6px;height:80px;padding:0 4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+.mk-bar{flex:1;border-radius:4px 4px 0 0;transition:height .6s cubic-bezier(.4,0,.2,1)}
+.mk-bar.a{background:var(--accent);opacity:0.8}
+
+.mk-tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:10px}
+.mk-tbl th{text-align:left;padding:8px 10px;font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;border-bottom:1px solid var(--border)}
+.mk-tbl td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text-2)}
+.mk-tbl tr:last-child td{border-bottom:none}
+.mk-tbl .name{color:var(--text);font-weight:600}
+.mk-tbl .num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:10px}
+.mk-tbl .gain{color:var(--accent);font-weight:600}
+.mk-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:0.02em}
+.mk-badge.ok{background:rgba(76,175,80,0.12);color:#2E7D32}
+.mk-badge.low{background:rgba(245,158,11,0.12);color:#B45309}
+.mk-badge.crit{background:rgba(239,68,68,0.12);color:#DC2626}
+.mk-badge.promo{background:var(--accent-soft-2);color:var(--accent)}
+
+@media(max-width:700px){
+  .mock-body{grid-template-columns:1fr}
+  .mock-side{display:none}
+  .mk-kpis{grid-template-columns:repeat(2,1fr)}
+}
+
+/* STATS */
+.stats{padding:48px 0;border-bottom:1px solid var(--border)}
+.stats-in{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+.stat{text-align:center}
+.stat-n{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-0.03em;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.stat-l{font-size:13px;color:var(--text-3);font-weight:500;margin-top:6px}
+@media(max-width:600px){.stats-in{grid-template-columns:repeat(2,1fr);gap:24px}}
+
+/* FEATURES */
+.features{padding:96px 0}
+.sect-head{text-align:center;margin-bottom:64px}
+.sect-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:14px}
+.sect-tag i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:block}
+.sect-h{font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-0.02em;line-height:1.15;text-wrap:balance;margin-bottom:14px}
+.sect-sub{font-size:16px;color:var(--text-2);max-width:520px;margin:0 auto;line-height:1.65;font-weight:400}
+
+.feat{display:grid;grid-template-columns:1fr 1.2fr;gap:64px;align-items:center;margin-bottom:96px}
+.feat:last-child{margin-bottom:0}
+.feat.rev{grid-template-columns:1.2fr 1fr}
+.feat.rev .feat-text{order:2}
+.feat.rev .feat-visual{order:1}
+.feat-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.feat-tag i{width:5px;height:5px;border-radius:50%;background:var(--accent);display:block}
+.feat-h{font-size:clamp(22px,3vw,32px);font-weight:800;letter-spacing:-0.02em;line-height:1.15;margin-bottom:16px}
+.feat-p{font-size:15px;color:var(--text-2);line-height:1.7;margin-bottom:24px}
+.feat-checks{display:flex;flex-direction:column;gap:12px}
+.feat-check{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text-2);font-weight:500;line-height:1.5}
+.feat-check .ck{width:22px;height:22px;min-width:22px;background:var(--accent-soft);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.feat-check .ck svg{width:12px;height:12px}
+
+.feat-visual .mockup-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);transition:transform .4s,box-shadow .4s}
+.feat-visual .mockup-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-xl)}
+
+@media(max-width:840px){
+  .feat,.feat.rev{grid-template-columns:1fr;gap:36px}
+  .feat.rev .feat-text,.feat.rev .feat-visual{order:unset}
+}
+
+/* WHY */
+.why{padding:96px 0;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.why-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 24px;transition:all .3s}
+.why-card:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
+.why-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;background:linear-gradient(135deg,rgba(20,141,141,0.08),rgba(193,225,167,0.18))}
+.why-icon svg{width:24px;height:24px;color:var(--accent)}
+.why-t{font-size:17px;font-weight:700;margin-bottom:8px;letter-spacing:-0.01em}
+.why-d{font-size:13px;color:var(--text-2);line-height:1.65}
+@media(max-width:700px){.why-grid{grid-template-columns:1fr}}
+
+/* CTA */
+.cta{padding:96px 0;background:var(--hero-bg);position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(20,141,141,0.12),transparent 70%);bottom:-200px;right:-100px;pointer-events:none}
+.cta-in{position:relative;z-index:1;text-align:center;max-width:580px;margin:0 auto}
+.cta h2{font-size:clamp(28px,4vw,44px);font-weight:800;color:var(--hero-text);letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;text-wrap:balance}
+.cta h2 em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-sub{font-size:16px;color:var(--hero-muted);margin-bottom:36px;line-height:1.65}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-wa{background:#25D366;color:#fff}
+.btn-wa:hover{background:#20BD5A;transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,0.25)}
+.btn-mail{background:transparent;color:var(--hero-muted);border:1px solid var(--hero-border)}
+.btn-mail:hover{border-color:rgba(255,255,255,0.25);color:#fff}
+
+/* FOOTER */
+.foot{background:var(--hero-bg);border-top:1px solid var(--hero-border);padding:28px 0;text-align:center}
+.foot p{font-size:12px;color:var(--hero-muted);font-weight:500}
+
+/* ANIMATIONS */
+@media(prefers-reduced-motion:no-preference){
+  .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  .reveal.d1{transition-delay:.1s}
+  .reveal.d2{transition-delay:.2s}
+  .reveal.d3{transition-delay:.3s}
+  .hero-mock{animation:mockFloat 6s ease-in-out infinite}
+  @keyframes mockFloat{0%,100%{transform:rotateX(4deg) translateY(0)}50%{transform:rotateX(4deg) translateY(-6px)}}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="wrap nav-in">
+  <a href="#" class="logo"><i></i>Stockly</a>
+  <div class="nav-r">
+    <a href="#features" class="desk">Funcionalidades</a>
+    <a href="#why" class="desk">Beneficios</a>
+    <a href="mailto:jeremiasescudero67@gmail.com?subject=Stockly%20-%20Solicitar%20demo" class="btn-nav">Solicitar demo</a>
+  </div>
+</div>
+</nav>
+
+<section class="hero">
+<div class="hero-in">
+  <div class="hero-pill"><span>NUEVO</span>Sistema de gestión comercial</div>
+  <h1>Tu negocio,<br><em>bajo control.</em></h1>
+  <p class="hero-sub">Stock, ventas, caja y proveedores integrados. Sin planillas, sin desorden, sin perder plata.</p>
+  <div class="hero-btns">
+    <a href="#cta" class="btn btn-fill">Empezar gratis <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    <a href="#features" class="btn btn-ghost">Ver funcionalidades</a>
+  </div>
+  <div class="hero-proof">
+    <span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 4.5L6 12 2.5 8"/></svg> Sin tarjeta</span>
+    <span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 4.5L6 12 2.5 8"/></svg> Listo en 5 min</span>
+    <span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 4.5L6 12 2.5 8"/></svg> Soporte humano</span>
+  </div>
+</div>
+<div class="wrap hero-mock-wrap">
+  <div class="hero-mock">
+    <div class="mock-chrome">
+      <div class="mock-dots"><i></i><i></i><i></i></div>
+      <div class="mock-url">stockly.app/dashboard</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-side">
+        <div class="mock-side-brand">
+          <i></i>
+          <div>Mi Negocio<small>stockly.app</small></div>
+        </div>
+        <div class="si on"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Inicio</div>
+        <div class="si"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6h12"/></svg>Productos</div>
+        <div class="si"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l2-2h8l2 2v10a1 1 0 01-1 1H3a1 1 0 01-1-1V4z"/><path d="M5 7h6"/></svg>Ventas</div>
+        <div class="si"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="1.5"/><path d="M1 7h14"/></svg>Caja</div>
+        <div class="si"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.5-5 6-5s6 2 6 5"/></svg>Clientes</div>
+        <div class="si"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8l5-5 5 5v5"/><path d="M7 13v-3h2v3"/></svg>Proveedores</div>
+        <div class="si"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2v12M12 2v12M4 8h8"/><path d="M4 5h8M4 11h8"/></svg>Pedidos</div>
+      </div>
+      <div class="mock-main">
+        <div class="mk-kpis">
+          <div class="mk-kpi"><div class="mk-kpi-l">Ventas hoy</div><div class="mk-kpi-v up">$284.500</div><div class="mk-kpi-d">+12% vs ayer</div></div>
+          <div class="mk-kpi"><div class="mk-kpi-l">Ganancia del día</div><div class="mk-kpi-v up">$93.200</div><div class="mk-kpi-d">32.7% margen</div></div>
+          <div class="mk-kpi"><div class="mk-kpi-l">Productos vendidos</div><div class="mk-kpi-v">47</div></div>
+          <div class="mk-kpi"><div class="mk-kpi-l">Stock bajo</div><div class="mk-kpi-v" style="color:#E84C5E">4</div></div>
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:10px;font-weight:700;color:var(--text)">Ventas de la semana</span>
+            <span style="font-size:9px;color:var(--text-3)">Lun - Dom</span>
+          </div>
+          <div class="mk-chart" aria-hidden="true" style="margin-bottom:4px">
+            <div class="mk-bar a" style="height:45%"></div>
+            <div class="mk-bar a" style="height:62%"></div>
+            <div class="mk-bar a" style="height:38%"></div>
+            <div class="mk-bar a" style="height:78%"></div>
+            <div class="mk-bar a" style="height:55%"></div>
+            <div class="mk-bar a" style="height:92%"></div>
+            <div class="mk-bar a" style="height:70%"></div>
+          </div>
+          <div style="display:flex;gap:6px;justify-content:space-between;padding:0 4px">
+            <span style="flex:1;text-align:center;font-size:8px;color:var(--text-3)">L</span>
+            <span style="flex:1;text-align:center;font-size:8px;color:var(--text-3)">M</span>
+            <span style="flex:1;text-align:center;font-size:8px;color:var(--text-3)">X</span>
+            <span style="flex:1;text-align:center;font-size:8px;color:var(--text-3)">J</span>
+            <span style="flex:1;text-align:center;font-size:8px;color:var(--text-3)">V</span>
+            <span style="flex:1;text-align:center;font-size:8px;font-weight:700;color:var(--accent)">S</span>
+            <span style="flex:1;text-align:center;font-size:8px;color:var(--text-3)">D</span>
+          </div>
+        </div>
+        <table class="mk-tbl">
+          <thead><tr><th>Alerta</th><th>Producto</th><th style="text-align:right">Stock</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td><span style="width:6px;height:6px;display:inline-block;border-radius:50%;background:#EF4444"></span></td><td class="name">Remera Negra M</td><td class="num">2</td><td><span class="mk-badge crit">Crítico</span></td></tr>
+            <tr><td><span style="width:6px;height:6px;display:inline-block;border-radius:50%;background:#F59E0B"></span></td><td class="name">Auriculares BT</td><td class="num">3</td><td><span class="mk-badge low">Bajo</span></td></tr>
+            <tr><td><span style="width:6px;height:6px;display:inline-block;border-radius:50%;background:#F59E0B"></span></td><td class="name">Mate Imperial</td><td class="num">4</td><td><span class="mk-badge low">Bajo</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="stats">
+<div class="wrap stats-in">
+  <div class="stat reveal"><div class="stat-n">100%</div><div class="stat-l">Online y en la nube</div></div>
+  <div class="stat reveal d1"><div class="stat-n">&lt;5 min</div><div class="stat-l">Para empezar a usar</div></div>
+  <div class="stat reveal d2"><div class="stat-n">24/7</div><div class="stat-l">Acceso a tus datos</div></div>
+  <div class="stat reveal d3"><div class="stat-n">$0</div><div class="stat-l">Instalación y setup</div></div>
+</div>
+</section>
+
+<section class="features" id="features">
+<div class="wrap">
+  <div class="sect-head reveal">
+    <div class="sect-tag"><i></i>Funcionalidades</div>
+    <h2 class="sect-h">Todo lo que necesitás,<br>nada que te sobre</h2>
+    <p class="sect-sub">Cada módulo diseñado para que pierdas menos tiempo y ganes más plata.</p>
+  </div>
+
+  <div class="feat reveal">
+    <div class="feat-text">
+      <div class="feat-tag"><i></i>Productos</div>
+      <h3 class="feat-h">Sabé cuánto ganás con cada producto</h3>
+      <p class="feat-p">Cargá costo y precio de venta. La ganancia se calcula sola. Actualizá precios masivamente por categoría en un click.</p>
+      <div class="feat-checks">
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Costo, precio y ganancia por producto</div>
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Actualización masiva de precios</div>
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Alertas automáticas de stock bajo</div>
+      </div>
+    </div>
+    <div class="feat-visual">
+      <div class="mockup-card">
+        <div class="mock-chrome"><div class="mock-dots"><i></i><i></i><i></i></div><div class="mock-url">stockly.app/productos</div></div>
+        <div style="padding:16px">
+          <table class="mk-tbl">
+            <thead><tr><th>Producto</th><th class="num">Costo</th><th class="num">Precio</th><th class="num">Ganancia</th></tr></thead>
+            <tbody>
+              <tr><td class="name">Campera Deportiva</td><td class="num">$28.500</td><td class="num">$45.000</td><td class="num gain">+$16.500</td></tr>
+              <tr><td class="name">Zapatillas Running</td><td class="num">$32.000</td><td class="num">$54.900</td><td class="num gain">+$22.900</td></tr>
+              <tr><td class="name">Mochila Urban</td><td class="num">$12.800</td><td class="num">$21.500</td><td class="num gain">+$8.700</td></tr>
+              <tr><td class="name">Gorra Snapback</td><td class="num">$4.200</td><td class="num">$7.900</td><td class="num gain">+$3.700</td></tr>
+              <tr><td class="name">Termo Stanley</td><td class="num">$18.600</td><td class="num">$29.000</td><td class="num gain">+$10.400</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feat rev reveal">
+    <div class="feat-text">
+      <div class="feat-tag"><i></i>Ventas</div>
+      <h3 class="feat-h">Vendé rápido, cobrá como quieras</h3>
+      <p class="feat-p">Registrá ventas en segundos. Pago dividido en dos métodos. El stock se descuenta automáticamente, incluyendo promos.</p>
+      <div class="feat-checks">
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Pago dividido en 2 métodos</div>
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Descuento automático de stock</div>
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Promos que descuentan componentes</div>
+      </div>
+    </div>
+    <div class="feat-visual">
+      <div class="mockup-card">
+        <div class="mock-chrome"><div class="mock-dots"><i></i><i></i><i></i></div><div class="mock-url">stockly.app/ventas</div></div>
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="font-size:13px;font-weight:700;color:var(--text)">Nueva venta — V-047</div>
+            <span class="mk-badge promo">Pago dividido</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+            <div style="background:var(--accent-soft);border:1px solid var(--accent-soft-2);border-radius:10px;padding:12px">
+              <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);font-weight:600;margin-bottom:4px">Efectivo</div>
+              <div style="font-size:16px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums">$30.000</div>
+            </div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px">
+              <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);font-weight:600;margin-bottom:4px">Transferencia</div>
+              <div style="font-size:16px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums">$28.800</div>
+            </div>
+          </div>
+          <table class="mk-tbl">
+            <thead><tr><th>Producto</th><th>Cant.</th><th class="num">Subtotal</th></tr></thead>
+            <tbody>
+              <tr><td class="name">Campera Deportiva</td><td>1</td><td class="num" style="font-weight:700">$45.000</td></tr>
+              <tr><td class="name">Gorra Snapback <span class="mk-badge promo" style="margin-left:4px">Promo</span></td><td>2</td><td class="num" style="font-weight:700">$13.800</td></tr>
+            </tbody>
+          </table>
+          <div style="text-align:right;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:16px;font-weight:800">Total: $58.800</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feat reveal">
+    <div class="feat-text">
+      <div class="feat-tag"><i></i>Caja diaria</div>
+      <h3 class="feat-h">Cerrá el día sabiendo cuánto entró</h3>
+      <p class="feat-p">Apertura con efectivo inicial. Al cerrar, el desglose automático por método: cuánto en efectivo, cuánto en transferencia, cuánto en tarjeta.</p>
+      <div class="feat-checks">
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Desglose por método de pago</div>
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Historial completo de cajas</div>
+        <div class="feat-check"><span class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M3.5 8.5L6.5 11.5 12.5 4.5"/></svg></span>Apertura + ventas = efectivo en caja</div>
+      </div>
+    </div>
+    <div class="feat-visual">
+      <div class="mockup-card">
+        <div class="mock-chrome"><div class="mock-dots"><i></i><i></i><i></i></div><div class="mock-url">stockly.app/caja</div></div>
+        <div style="padding:16px">
+          <div class="mk-kpis" style="grid-template-columns:repeat(3,1fr)">
+            <div class="mk-kpi"><div class="mk-kpi-l">Apertura</div><div class="mk-kpi-v">$50.000</div></div>
+            <div class="mk-kpi"><div class="mk-kpi-l">Ventas del día</div><div class="mk-kpi-v up">23</div></div>
+            <div class="mk-kpi"><div class="mk-kpi-l">Efectivo en caja</div><div class="mk-kpi-v">$198.700</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center">
+            <div style="background:var(--surface-2);border-radius:10px;padding:12px;border:1px solid var(--border)">
+              <span class="mk-badge ok" style="margin-bottom:6px;display:inline-block">Efectivo</span>
+              <div style="font-size:15px;font-weight:800;color:var(--text)">$148.700</div>
+              <div style="font-size:9px;color:var(--text-3);margin-top:2px">14 ventas</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:10px;padding:12px;border:1px solid var(--border)">
+              <span class="mk-badge" style="background:rgba(59,130,246,0.12);color:#2563EB;margin-bottom:6px;display:inline-block">Transferencia</span>
+              <div style="font-size:15px;font-weight:800;color:var(--text)">$96.300</div>
+              <div style="font-size:9px;color:var(--text-3);margin-top:2px">7 ventas</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:10px;padding:12px;border:1px solid var(--border)">
+              <span class="mk-badge" style="background:rgba(245,158,11,0.12);color:#B45309;margin-bottom:6px;display:inline-block">Débito</span>
+              <div style="font-size:15px;font-weight:800;color:var(--text)">$39.500</div>
+              <div style="font-size:9px;color:var(--text-3);margin-top:2px">2 ventas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="why" id="why">
+<div class="wrap">
+  <div class="sect-head reveal">
+    <div class="sect-tag"><i></i>Beneficios</div>
+    <h2 class="sect-h">Dejá de gestionar con WhatsApp y planillas</h2>
+  </div>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <div class="why-t">Todo en un solo lugar</div>
+      <div class="why-d">Productos, ventas, caja, clientes, proveedores y pedidos. Sin cambiar de app.</div>
+    </div>
+    <div class="why-card reveal d1">
+      <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M6 20v-4"/><path d="M18 20V4"/></svg></div>
+      <div class="why-t">Sabé cuánto ganás</div>
+      <div class="why-d">Cargá el costo y ve la ganancia en tiempo real. No más cuentas a mano.</div>
+    </div>
+    <div class="why-card reveal d2">
+      <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <div class="why-t">Stock automático</div>
+      <div class="why-d">Cada venta descuenta stock. Las promos descuentan cada componente. Alertas incluidas.</div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg></div>
+      <div class="why-t">Celular, tablet o PC</div>
+      <div class="why-d">Accedé desde el local, tu casa, o donde estés. Funciona en cualquier dispositivo.</div>
+    </div>
+    <div class="why-card reveal d1">
+      <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></div>
+      <div class="why-t">Todos los medios de pago</div>
+      <div class="why-d">Efectivo, transferencia, débito, crédito. Dividí una venta en dos métodos.</div>
+    </div>
+    <div class="why-card reveal d2">
+      <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="why-t">Seguro y privado</div>
+      <div class="why-d">Acceso con usuario y contraseña. Datos encriptados en la nube. Solo vos accedés.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="cta" id="cta">
+<div class="wrap cta-in reveal">
+  <h2>Empezá a controlar<br>tu negocio <em>hoy</em></h2>
+  <p class="cta-sub">Escribinos y te armamos una demo personalizada para tu rubro. Sin compromiso, sin letra chica.</p>
+  <div class="cta-btns">
+    <a href="https://wa.me/5493544400854?text=Hola!%20Me%20interesa%20Stockly%20para%20mi%20negocio" target="_blank" rel="noopener" class="btn btn-wa">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.138.56 4.147 1.54 5.89L0 24l6.305-1.654A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-1.876 0-3.653-.5-5.192-1.39l-.372-.22-3.857 1.012 1.03-3.765-.242-.385A9.71 9.71 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75S21.75 6.615 21.75 12s-4.365 9.75-9.75 9.75z"/></svg>
+      Escribinos por WhatsApp
+    </a>
+    <a href="mailto:jeremiasescudero67@gmail.com?subject=Stockly%20-%20Solicitar%20demo" class="btn btn-mail">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+      Enviar email
+    </a>
+  </div>
+</div>
+</section>
+
+<footer class="foot">
+<div class="wrap">
+  <p>Stockly · Software de gestión comercial · Córdoba, Argentina</p>
+</div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
